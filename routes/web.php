@@ -16,6 +16,7 @@ use App\Http\Controllers\SolicitudController;
 
 Route::get('/solicitud', [SolicitudController::class, 'create'])->name('solicitud.create');
 Route::post('/solicitud', [SolicitudController::class, 'store'])->name('solicitud.store');
+Route::get('/solicitudes_clientes', [SolicitudController::class, 'indexClientes'])->name('solicitudes.clientes');
 
 Route::get('/', function () {
     return view('welcome');

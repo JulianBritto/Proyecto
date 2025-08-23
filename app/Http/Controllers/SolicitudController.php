@@ -28,12 +28,12 @@ class SolicitudController extends Controller
     {
         // Validación de campos
         $request->validate([
-            'nombre'          => 'required|string|max:100',
-            'email'           => 'required|email|max:150',
-            'asunto'          => 'required|string|max:150',
-            'descripcion'     => 'required|string|max:500',
-            'categoria'       => 'nullable|string|max:150',
-            'subcategoria'    => 'nullable|string|max:150',
+            'nombre'       => 'required|string|max:100',
+            'email'        => 'required|email|max:150',
+            'asunto'       => 'required|string|max:150',
+            'descripcion'  => 'required|string|max:500',
+            'categoria'    => 'nullable|string|max:150',
+            'subcategoria' => 'nullable|string|max:150',
         ]);
 
         // Limitar máximo 3 solicitudes al día por correo
@@ -49,14 +49,26 @@ class SolicitudController extends Controller
 
         // Guardamos la solicitud en la BD
         Solicitud::create([
-            'nombre'          => $request->nombre,
-            'email'           => $request->email,
-            'asunto'          => $request->asunto,
-            'descripcion'     => $request->descripcion,
+            'nombre'       => $request->nombre,
+            'email'        => $request->email,
+            'asunto'       => $request->asunto,
+            'descripcion'  => $request->descripcion,
             'categoria'    => $request->categoria,
             'subcategoria' => $request->subcategoria,
         ]);
 
         return redirect()->back()->with('success', 'Solicitud enviada exitosamente.');
+    }
+
+    /**
+     * Muestra todas las solicitudes en el front (URL: /solicitudes_clientes)
+     */
+    public function indexClientes()
+    {
+        // Traer todas las solicitudes
+        $solicitudes = Solicitud::orderBy('created_at', 'desc')->get();
+
+        // Retornar a la vista
+        return view('solicitudes.clientes', compact('solicitudes'));
     }
 }
