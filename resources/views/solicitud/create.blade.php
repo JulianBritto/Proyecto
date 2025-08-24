@@ -13,7 +13,7 @@
         .alert-floating {
             position: fixed;
             top: 20px;
-            right: 20px; /* cambiado a la derecha */
+            right: 20px;
             z-index: 1055;
             opacity: 1;
             transition: opacity 0.8s ease-out;

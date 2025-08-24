@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\Solicitud;
 use App\Models\Categoria;
 use App\Models\Subcategoria;
@@ -63,12 +64,49 @@ class SolicitudController extends Controller
     /**
      * Muestra todas las solicitudes en el front (URL: /solicitudes_clientes)
      */
-    public function indexClientes()
-    {
-        // Traer todas las solicitudes
-        $solicitudes = Solicitud::orderBy('created_at', 'desc')->get();
+public function indexClientes()
+{
+    // Traer todas las solicitudes
+    $solicitudes = Solicitud::orderBy('created_at', 'desc')->get();
 
-        // Retornar a la vista
-        return view('solicitudes.clientes', compact('solicitudes'));
-    }
+    // Traer categorías con subcategorías
+    $categorias = Categoria::with('subcategorias')->get();
+
+    // Retornar a la vista
+    return view('solicitudes.clientes', compact('solicitudes', 'categorias'));
 }
+
+    /**
+     * Actualiza una solicitud (usado en el modal de editar)
+     */
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'nombre'       => 'required|string|max:100',
+        'email'        => 'required|email|max:150',
+        'asunto'       => 'required|string|max:150',
+        'descripcion'  => 'required|string|max:500',
+        'categoria'    => 'nullable|string|max:150',
+        'subcategoria' => 'nullable|string|max:150',
+    ]);
+
+    $solicitud = Solicitud::findOrFail($id);
+    $solicitud->update($request->all());
+
+    // Mensaje flash + redirección a la vista clientes
+    return redirect()->route('solicitudes_clientes')
+                     ->with('success', 'Cambios realizados correctamente');
+}
+
+    /**
+     * Elimina una solicitud
+     */
+public function destroy($id)
+{
+    $solicitud = Solicitud::findOrFail($id);
+    $solicitud->delete();
+
+    return redirect()->route('solicitudes_clientes')
+                 ->with('deleted', 'Solicitud eliminada correctamente');
+}
+}   

@@ -15,8 +15,27 @@ use App\Http\Controllers\SolicitudController;
 */
 
 Route::get('/solicitud', [SolicitudController::class, 'create'])->name('solicitud.create');
+
 Route::post('/solicitud', [SolicitudController::class, 'store'])->name('solicitud.store');
-Route::get('/solicitudes_clientes', [SolicitudController::class, 'indexClientes'])->name('solicitudes.clientes');
+
+// Lista de solicitudes para clientes
+Route::get('/solicitudes_clientes', [SolicitudController::class, 'indexClientes'])
+    ->name('solicitudes_clientes');
+
+// Update de solicitudes
+Route::put('/solicitudes/{id}', [SolicitudController::class, 'update'])
+    ->name('solicitudes.update');
+
+Route::resource('solicitudes', SolicitudController::class);
+
+Route::post('/solicitudes', [SolicitudController::class, 'store'])
+->name('solicitudes.store');
+
+Route::put('/solicitudes/{solicitud}', [SolicitudController::class, 'update'])
+->name('solicitudes.update');
+
+Route::delete('/solicitudes/{solicitud}', [SolicitudController::class, 'destroy'])
+->name('solicitudes.destroy');
 
 Route::get('/', function () {
     return view('welcome');

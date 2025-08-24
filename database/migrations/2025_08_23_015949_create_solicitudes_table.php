@@ -16,7 +16,9 @@ public function up()
         $table->text('descripcion');
         $table->string('categoria', 150)->nullable();     // campo texto
         $table->string('subcategoria', 150)->nullable();  // campo texto
-        $table->timestamps();
+        $table->timestamp('created_at')->useCurrent();
+        $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();  
+
     });
 }
 
