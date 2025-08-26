@@ -9,6 +9,12 @@
         body {
             background-color: #f8f9fa;
         }
+        .container.mt-5 {
+  width: 85% !important;
+  max-width: 85% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
         .card {
             border-radius: 12px;
             box-shadow: 0px 4px 12px rgba(0,0,0,0.1);

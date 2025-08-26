@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SolicitudController;
+use App\Http\Controllers\CategoriaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,23 @@ Route::put('/solicitudes/{solicitud}', [SolicitudController::class, 'update'])
 Route::delete('/solicitudes/{solicitud}', [SolicitudController::class, 'destroy'])
 ->name('solicitudes.destroy');
 
+Route::get('/subcategorias/{categoria_id}', function ($categoria_id) {
+    return \App\Models\Subcategoria::where('categoria_id', $categoria_id)->get();
+});
+
+Route::get('/subcategorias/{categoria_id}', [SolicitudController::class, 'getSubcategorias']);
+
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/categorias', function() {
+    $categorias = \App\Models\Categoria::with('subcategorias')->get();
+    return view('categorias', compact('categorias'));
+})->name('categorias.index');
+
+// Ruta para traer subcategorías por AJAX
+Route::get('/categorias/{id}/subcategorias', [SolicitudController::class, 'getSubcategorias']);
+
+Route::post('/categorias/crear', [CategoriaController::class, 'store'])->name('categorias.store');
+Route::get('/categorias/{id}/subcategorias', [CategoriaController::class, 'getSubcategorias']); // Para cargar dinámicamente

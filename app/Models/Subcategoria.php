@@ -9,11 +9,17 @@ class Subcategoria extends Model
 {
     use HasFactory;
 
+    // Nombre de la tabla en la base de datos
     protected $table = 'subcategorias';
-    protected $fillable = ['nombre', 'categoria'];
 
-public function categoria()
-{
-    return $this->belongsTo(Categoria::class);
-}
+    // Campos que se pueden asignar de manera masiva
+    protected $fillable = ['nombre', 'categoria_id'];
+
+    /**
+     * Relación: Una subcategoría pertenece a una categoría
+     */
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class, 'categoria_id');
+    }
 }

@@ -9,7 +9,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        /* Estilo para el mensaje flotante */
         .alert-floating {
             position: fixed;
             top: 20px;
@@ -80,24 +79,19 @@
                             {{-- Campo Categoría --}}
                             <div class="mb-3">
                                 <label class="form-label">Categoría</label>
-                                <select name="categoria" class="form-select" required>
+                                <select name="categoria_id" id="categorias" class="form-select" required>
                                     <option value="">-- Selecciona una categoría --</option>
-                                    <option value="Soporte" {{ old('categoria') == 'Soporte' ? 'selected' : '' }}>Soporte</option>
-                                    <option value="Desarrollo" {{ old('categoria') == 'Desarrollo' ? 'selected' : '' }}>Desarrollo</option>
-                                    <option value="Infraestructura" {{ old('categoria') == 'Infraestructura' ? 'selected' : '' }}>Infraestructura</option>
-                                    <option value="Administrativa" {{ old('categoria') == 'Administrativa' ? 'selected' : '' }}>Administrativa</option>
+                                    @foreach ($categorias as $categoria)
+                                        <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
+                                    @endforeach
                                 </select>
                             </div>
 
                             {{-- Campo Subcategoría --}}
                             <div class="mb-3">
                                 <label class="form-label">Subcategoría</label>
-                                <select name="subcategoria" class="form-select" required>
+                                <select name="subcategoria_id" id="subcategorias" class="form-select" required>
                                     <option value="">-- Selecciona una subcategoría --</option>
-                                    <option value="Errores" {{ old('subcategoria') == 'Errores' ? 'selected' : '' }}>Errores</option>
-                                    <option value="Mejoras" {{ old('subcategoria') == 'Mejoras' ? 'selected' : '' }}>Mejoras</option>
-                                    <option value="Consultas" {{ old('subcategoria') == 'Consultas' ? 'selected' : '' }}>Consultas</option>
-                                    <option value="Mantenimiento" {{ old('subcategoria') == 'Mantenimiento' ? 'selected' : '' }}>Mantenimiento</option>
                                 </select>
                             </div>
 
@@ -125,8 +119,31 @@
             if (alerta) {
                 setTimeout(() => {
                     alerta.classList.add("alert-hidden");
-                    setTimeout(() => alerta.remove(), 800); // se elimina después del fade
-                }, 3000); // espera 3 segundos antes de desaparecer
+                    setTimeout(() => alerta.remove(), 800);
+                }, 3000);
+            }
+        });
+    </script>
+
+    {{-- Script para cargar subcategorías dinámicamente --}}
+    <script>
+        document.getElementById('categorias').addEventListener('change', function() {
+            let categoriaId = this.value;
+            let subcategoriaSelect = document.getElementById('subcategorias');
+
+            subcategoriaSelect.innerHTML = '<option value="">-- Selecciona una subcategoría --</option>';
+
+            if (categoriaId) {
+                fetch(`/subcategorias/${categoriaId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(sub => {
+                            let option = document.createElement('option');
+                            option.value = sub.id;
+                            option.textContent = sub.nombre;
+                            subcategoriaSelect.appendChild(option);
+                        });
+                    });
             }
         });
     </script>
