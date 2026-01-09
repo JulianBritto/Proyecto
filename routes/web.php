@@ -53,6 +53,10 @@ Route::get('/categorias', function() {
     return view('categorias', compact('categorias'));
 })->name('categorias.index');
 
+// Vista que muestra tabla de categorías y sus subcategorías
+Route::get('/categoriasysubcategorias', [\App\Http\Controllers\CategoriaController::class, 'indexWithSubcategorias'])
+    ->name('categoriasysubcategorias.index');
+
 // Ruta para traer subcategorías por AJAX
 Route::get('/categorias/{id}/subcategorias', [SolicitudController::class, 'getSubcategorias']);
 

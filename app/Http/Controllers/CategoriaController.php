@@ -121,13 +121,19 @@ public function edit($id)
 
             // eliminar subcategorías que no fueron enviadas
             $toDelete = array_diff($existingIds, $sentIds);
+            $deletedNames = [];
             if (!empty($toDelete)) {
+                $deletedNames = Subcategoria::whereIn('id', $toDelete)->pluck('nombre')->toArray();
                 Subcategoria::whereIn('id', $toDelete)->delete();
             }
 
             DB::commit();
 
-            return response()->json(['success' => true, 'message' => 'Categoría actualizada correctamente']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Categoría actualizada correctamente',
+                'deleted_subcategorias' => $deletedNames,
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => 'Error al actualizar', 'error' => $e->getMessage()], 500);
@@ -145,5 +151,12 @@ public function edit($id)
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Error al eliminar', 'error' => $e->getMessage()], 500);
         }
+    }
+
+    // Página con tabla de categorías y sus subcategorías (visual)
+    public function indexWithSubcategorias()
+    {
+        $categorias = Categoria::with('subcategorias')->get();
+        return view('categoriasysubcategorias', compact('categorias'));
     }
 }
