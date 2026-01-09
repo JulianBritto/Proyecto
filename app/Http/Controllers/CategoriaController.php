@@ -63,6 +63,13 @@ class CategoriaController extends Controller
         return response()->json($subcategorias);
     }
 
+    // Mostrar vista con tabla de categorías y sus subcategorías
+    public function indexWithSubcategorias()
+    {
+        $categorias = Categoria::with('subcategorias')->orderBy('nombre')->get();
+        return view('categoriasysubcategorias', compact('categorias'));
+    }
+
     // Obtener categoría con sus subcategorías
 public function edit($id)
 {
@@ -70,93 +77,4 @@ public function edit($id)
 
     return response()->json($categoria);
 }
-
-    // Actualizar categoría y sus subcategorías (crear/editar/eliminar según payload)
-    public function update(Request $request, $id)
-    {
-        $data = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'subcategorias' => 'nullable|array',
-            'subcategorias.*.id' => 'nullable|integer|exists:subcategorias,id',
-            'subcategorias.*.nombre' => 'nullable|string|max:255',
-        ]);
-
-        try {
-            DB::beginTransaction();
-
-            $categoria = Categoria::with('subcategorias')->findOrFail($id);
-            $categoria->nombre = $data['nombre'];
-            $categoria->save();
-
-            $existingIds = $categoria->subcategorias->pluck('id')->toArray();
-            $sentIds = [];
-
-            if (!empty($data['subcategorias'])) {
-                foreach ($data['subcategorias'] as $sub) {
-                    $subNombre = isset($sub['nombre']) ? trim($sub['nombre']) : null;
-                    if (!empty($sub['id'])) {
-                        // actualizar o eliminar si nombre vacío
-                        $s = Subcategoria::find($sub['id']);
-                        if ($s) {
-                            if (empty($subNombre)) {
-                                $s->delete();
-                            } else {
-                                $s->nombre = $subNombre;
-                                $s->save();
-                                $sentIds[] = $s->id;
-                            }
-                        }
-                    } else {
-                        // crear nueva subcategoría si tiene nombre
-                        if (!empty($subNombre)) {
-                            $new = Subcategoria::create([
-                                'nombre' => $subNombre,
-                                'categoria_id' => $categoria->id,
-                            ]);
-                            $sentIds[] = $new->id;
-                        }
-                    }
-                }
-            }
-
-            // eliminar subcategorías que no fueron enviadas
-            $toDelete = array_diff($existingIds, $sentIds);
-            $deletedNames = [];
-            if (!empty($toDelete)) {
-                $deletedNames = Subcategoria::whereIn('id', $toDelete)->pluck('nombre')->toArray();
-                Subcategoria::whereIn('id', $toDelete)->delete();
-            }
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Categoría actualizada correctamente',
-                'deleted_subcategorias' => $deletedNames,
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Error al actualizar', 'error' => $e->getMessage()], 500);
-        }
-    }
-
-    // Eliminar categoría (y subcategorías por cascade)
-    public function destroy($id)
-    {
-        try {
-            $categoria = Categoria::findOrFail($id);
-            $categoria->delete();
-
-            return response()->json(['success' => true, 'message' => 'Categoría eliminada correctamente']);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Error al eliminar', 'error' => $e->getMessage()], 500);
-        }
-    }
-
-    // Página con tabla de categorías y sus subcategorías (visual)
-    public function indexWithSubcategorias()
-    {
-        $categorias = Categoria::with('subcategorias')->get();
-        return view('categoriasysubcategorias', compact('categorias'));
-    }
 }

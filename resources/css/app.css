@@ -1,8 +1,3 @@
 .container {
   max-width: 100% !important;
 }
-
-/* Centrar títulos h1-h3 en toda la aplicación */
-h1, h2, h3 {
-  text-align: center;
-}
