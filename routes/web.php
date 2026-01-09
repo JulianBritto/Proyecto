@@ -58,3 +58,8 @@ Route::get('/categorias/{id}/subcategorias', [SolicitudController::class, 'getSu
 
 Route::post('/categorias/crear', [CategoriaController::class, 'store'])->name('categorias.store');
 Route::get('/categorias/{id}/subcategorias', [CategoriaController::class, 'getSubcategorias']); // Para cargar dinámicamente
+
+// Endpoints para edición desde la interfaz (detalles, actualizar, eliminar)
+Route::get('/categorias/{id}/detalles', [CategoriaController::class, 'edit']);
+Route::put('/categorias/{id}/editar', [CategoriaController::class, 'update']);
+Route::delete('/categorias/{id}/eliminar', [CategoriaController::class, 'destroy']);
