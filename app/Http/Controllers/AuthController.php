@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -23,16 +24,24 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             $user = Auth::user();
-            // Role 1 -> /solicitud ; Role 2 -> /admin
-            if (isset($user->role) && $user->role == 1) {
-                return redirect()->intended('/solicitud');
+            Log::info('Auth login: user id='.$user->id.' email='.$user->email.' role='.(isset($user->role)?$user->role:'(null)'));
+
+            // Si el id del usuario es 2, forzamos redirección a /solicitud
+            if (isset($user->id) && (int) $user->id === 2) {
+                return redirect()->to('/solicitud');
             }
 
-            if (isset($user->role) && $user->role == 2) {
-                return redirect()->intended('/admin');
+            $role = isset($user->role) ? (int) $user->role : 0;
+
+            if ($role === 1) {
+                return redirect()->to('/solicitud');
             }
 
-            return redirect()->intended('/');
+            if ($role === 2) {
+                return redirect()->to('/admin');
+            }
+
+            return redirect()->to('/');
         }
 
         return back()->withErrors([
