@@ -34,11 +34,11 @@ class AuthController extends Controller
             $role = isset($user->role) ? (int) $user->role : 0;
 
             if ($role === 1) {
-                return redirect()->to('/solicitud');
+                return redirect()->to('/admin');
             }
 
             if ($role === 2) {
-                return redirect()->to('/admin');
+                return redirect()->to('/solicitud');
             }
 
             return redirect()->to('/');
@@ -54,6 +54,6 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/');
+        return redirect('/login');
     }
 }

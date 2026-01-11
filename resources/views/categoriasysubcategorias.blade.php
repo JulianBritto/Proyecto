@@ -9,11 +9,41 @@
 	</div>
 
 	<style>
-		/* Remove white background/shadow so only the blue border remains */
-		.card-dashboard { border-radius: 12px; box-shadow: none; background: transparent; }
-		.card-dashboard .card-body { background: transparent; }
-		.card-dashboard .card-header { background: linear-gradient(90deg,#147bff,#0b63e6); color:#fff; padding:16px; }
-		.card-dashboard .card-header h4 { margin:0; font-weight:700; }
+		.card-dashboard {
+			border-radius: 15px;
+			box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+			border: none;
+		}
+		.card-dashboard .card-header {
+			background: linear-gradient(135deg, #007bff, #0056b3);
+			color: #fff;
+			padding: 20px;
+			border-radius: 15px 15px 0 0 !important;
+		}
+		.card-dashboard .card-header h4 {
+			margin: 0;
+			font-weight: 700;
+		}
+		.table {
+			border-radius: 10px;
+			overflow: hidden;
+			box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+		}
+		.table thead th {
+			background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+			border: none;
+			font-weight: 600;
+			color: #495057;
+		}
+		.table tbody tr:hover {
+			background-color: #f8f9fa;
+			transform: scale(1.01);
+			transition: all 0.2s ease;
+		}
+		.btn-outline-primary:hover {
+			transform: translateY(-2px);
+			transition: all 0.3s ease;
+		}
 	</style>
 
 	<div class="row">

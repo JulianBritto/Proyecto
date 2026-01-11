@@ -1,105 +1,27 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solicitudes de Clientes</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .container.mt-5 {
-  width: 85% !important;
-  max-width: 85% !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}
-        .card {
-            border-radius: 12px;
-            box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
-            max-width: 100%;
-            margin: auto;
-            padding: 20px;
-            overflow-x: auto;
-        }
-        h2 {
-            font-weight: bold;
-            color: #0d6efd;
-            text-align: center;
-        }
-        .table {
-            width: 100%;
-            table-layout: auto;
-            margin: 0 auto;
-        }
-        .table-responsive {
-            overflow-x: visible !important;
-        }
-        table thead {
-            background-color: #0d6efd;
-            color: #fff;
-        }
-        .table tbody tr:hover {
-            background-color: #f1f5ff;
-        }
-        .action-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 6px;
-        }
+@extends('layouts.app')
 
-        /* 🔹 Estilos para los modales */
-        .modal-content {
-            border-radius: 12px;
-            box-shadow: 0px 6px 20px rgba(0,0,0,0.15);
-        }
-        .modal-header {
-            background: #0d6efd;
-            color: white;
-            border-radius: 12px 12px 0 0;
-        }
-        .modal-title {
-            font-weight: bold;
-        }
-        .modal-body label {
-            font-weight: 600;
-            margin-bottom: 6px;
-            display: block;
-            color: #333;
-        }
-        .modal-body input,
-        .modal-body select,
-        .modal-body textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 18px; /* 🔹 separación entre campos */
-            font-size: 15px;
-            transition: 0.3s;
-        }
-        .modal-body input:focus,
-        .modal-body select:focus,
-        .modal-body textarea:focus {
-            border-color: #0d6efd;
-            box-shadow: 0 0 6px rgba(13, 110, 253, 0.3);
-            outline: none;
-        }
-        .modal-footer .btn-primary {
-            background: #0d6efd;
-            border: none;
-            font-weight: bold;
-        }
-        .modal-footer .btn-primary:hover {
-            background: #084298;
-        }
-    </style>
-</head>
-<body>
-<div class="container mt-5">
-    <div class="card p-4">
-        <h2 class="mb-4 text-center">📋 Solicitudes de Clientes</h2>
+@section('title', 'Solicitudes de Clientes')
+
+@section('content')
+<div class="row justify-content-center">
+    <div class="col-lg-12">
+        <div class="text-center mb-5">
+            <i class="fas fa-clipboard-list fa-3x text-primary mb-3"></i>
+            <h1 class="display-6 fw-bold text-primary mb-2">Solicitudes de Clientes</h1>
+            <p class="lead text-muted">Gestión completa de solicitudes enviadas por los usuarios</p>
+        </div>
+
+        <div class="card border-0 shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-list fa-2x me-3"></i>
+                    <div>
+                        <h4 class="mb-0 fw-bold">Lista de Solicitudes</h4>
+                        <small>Administra y responde a las solicitudes de los clientes</small>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
 
         @if($solicitudes->isEmpty())
             <div class="alert alert-info text-center">
@@ -312,5 +234,4 @@
         new bootstrap.Toast(document.getElementById('toastDeleted')).show();
     @endif
 </script>
-</body>
-</html>
+@endsection

@@ -16,60 +16,60 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::get('/solicitud', [SolicitudController::class, 'create'])->name('solicitud.create');
-
-Route::post('/solicitud', [SolicitudController::class, 'store'])->name('solicitud.store');
-
-// Auth routes
+// Auth routes (no requieren autenticación)
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Admin dashboard
-Route::get('/admin', function () {
-    return view('admin');
-})->name('admin.index');
+// Rutas protegidas (requieren autenticación)
+Route::middleware(['auth'])->group(function () {
 
-// Lista de solicitudes para clientes
-Route::get('/solicitudes_clientes', [SolicitudController::class, 'indexClientes'])
-    ->name('solicitudes_clientes');
+    // Solicitudes - accesible para rol 2
+    Route::middleware(['role:2'])->group(function () {
+        Route::get('/solicitud', [SolicitudController::class, 'create'])->name('solicitud.create');
+        Route::post('/solicitud', [SolicitudController::class, 'store'])->name('solicitud.store');
+    });
 
-// Update de solicitudes
-Route::put('/solicitudes/{id}', [SolicitudController::class, 'update'])
-    ->name('solicitudes.update');
+    // Admin dashboard - solo rol 1
+    Route::middleware(['role:1'])->group(function () {
+        Route::get('/admin', function () {
+            return view('admin');
+        })->name('admin.index');
+    });
 
-Route::resource('solicitudes', SolicitudController::class);
+    // Lista de solicitudes para clientes - rol 1
+    Route::middleware(['role:1'])->group(function () {
+        Route::get('/solicitudes_clientes', [SolicitudController::class, 'indexClientes'])
+            ->name('solicitudes_clientes');
+    });
 
-Route::post('/solicitudes', [SolicitudController::class, 'store'])
-->name('solicitudes.store');
+    // Gestión de solicitudes - rol 1
+    Route::middleware(['role:1'])->group(function () {
+        Route::resource('solicitudes', SolicitudController::class);
+        Route::put('/solicitudes/{solicitud}', [SolicitudController::class, 'update'])
+            ->name('solicitudes.update');
+        Route::delete('/solicitudes/{solicitud}', [SolicitudController::class, 'destroy'])
+            ->name('solicitudes.destroy');
+    });
 
-Route::put('/solicitudes/{solicitud}', [SolicitudController::class, 'update'])
-->name('solicitudes.update');
+    // Categorías - rol 1
+    Route::middleware(['role:1'])->group(function () {
+        Route::get('/categorias', function() {
+            $categorias = \App\Models\Categoria::with('subcategorias')->get();
+            return view('categorias', compact('categorias'));
+        })->name('categorias.index');
 
-Route::delete('/solicitudes/{solicitud}', [SolicitudController::class, 'destroy'])
-->name('solicitudes.destroy');
+        Route::get('/categoriasysubcategorias', [\App\Http\Controllers\CategoriaController::class, 'indexWithSubcategorias'])
+            ->name('categoriasysubcategorias.index');
 
-Route::get('/subcategorias/{categoria_id}', function ($categoria_id) {
-    return \App\Models\Subcategoria::where('categoria_id', $categoria_id)->get();
+        Route::post('/categorias/crear', [CategoriaController::class, 'store'])->name('categorias.store');
+    });
+
+    // AJAX routes - rol 1
+    Route::middleware(['role:1'])->group(function () {
+        Route::get('/subcategorias/{categoria_id}', [SolicitudController::class, 'getSubcategorias']);
+        Route::get('/categorias/{id}/subcategorias', [SolicitudController::class, 'getSubcategorias']);
+        Route::get('/categorias/{id}/subcategorias', [CategoriaController::class, 'getSubcategorias']);
+    });
+
 });
-
-Route::get('/subcategorias/{categoria_id}', [SolicitudController::class, 'getSubcategorias']);
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/categorias', function() {
-    $categorias = \App\Models\Categoria::with('subcategorias')->get();
-    return view('categorias', compact('categorias'));
-})->name('categorias.index');
-
-// Vista tabla categorías y subcategorías
-Route::get('/categoriasysubcategorias', [\App\Http\Controllers\CategoriaController::class, 'indexWithSubcategorias'])
-    ->name('categoriasysubcategorias.index');
-
-// Ruta para traer subcategorías por AJAX
-Route::get('/categorias/{id}/subcategorias', [SolicitudController::class, 'getSubcategorias']);
-
-Route::post('/categorias/crear', [CategoriaController::class, 'store'])->name('categorias.store');
-Route::get('/categorias/{id}/subcategorias', [CategoriaController::class, 'getSubcategorias']); // Para cargar dinámicamente
